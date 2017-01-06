@@ -49,16 +49,16 @@
       toggleSubscription: function() {
         var requestPermission = this.$.subscribe.checked;
         if (requestPermission) {
-          this.$.messaging.requestPermission().then(() => {
+          this.$.messaging.requestPermission().then(function() {
             console.log('user subscribed successfully!');
-          }, (err) => {
+        }, function(err) {
             console.log('user subscribe failed :(', err);
           });
         } else {
           console.log('user rejected permission');
         }
       },
-      handleMessage() {
+      handleMessage: function() {
         console.log('message received', arguments);
       }
     });

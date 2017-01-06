@@ -92,11 +92,19 @@ function dependencies() {
     .pipe(project.rejoin());
 }
 
+function copyFCMSW() {
+  return gulp.src('fcm-worker-ext.js')
+  .pipe(gulp.dest('./build/bundled/'))
+  .pipe(gulp.dest('./build/unbundled/'));
+}
+
+
 // Clean the build directory, split all source and dependency files into streams
 // and process them, and output bundled and unbundled versions of the project
 // with their own service workers
 gulp.task('default', gulp.series([
   clean.build,
   project.merge(source, dependencies),
-  project.serviceWorker
+  project.serviceWorker,
+  copyFCMSW
 ]));
