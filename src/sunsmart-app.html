@@ -22,8 +22,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../bower_components/polymerfire/firebase-app.html" />
+<link rel="import" href="../bower_components/polymerfire/firebase-auth.html" />
 <link rel="import" href="../bower_components/polymerfire/firebase-messaging.html" />
 <link rel="import" href="../bower_components/polymerfire/firebase-document.html" />
+<link rel="import" href="sunsmart-subscription.html" />
+<link rel="import" href="sunsmart-login.html" />
 <dom-module id="sunsmart-app">
   <template>
     <style>
@@ -72,20 +75,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         data="{{routeData}}"
         tail="{{subroute}}"></app-route>
     <firebase-app
-      name="Sunsmart"
-      api-key="AIzaSyA2MuEZZnmEUE0ZyQFQpk8Nco3kn2usK00"
+      id="firebase"
       auth-domain="sunsmart-843e6.firebaseapp.com"
-      database-url="https://sunsmart-843e6.firebaseio.com/">
+      database-url="https://sunsmart-843e6.firebaseio.com"
+      api-key="AIzaSyA2MuEZZnmEUE0ZyQFQpk8Nco3kn2usK00"
+      messaging-sender-id="97269898080">
     </firebase-app>
-    <firebase-messaging id="messaging"
-      token="{{token}}"
-      active="{{active}}"
-      on-message="handleMessage"
-      custom-sw>
-    </firebase-messaging>
-    <firebase-document
-      path="/users/[[user.uid]]/token"
-      value="[[token]]"></firebase-document>
+
     <app-drawer-layout fullbleed>
       <!-- Drawer content -->
       <app-drawer>
@@ -103,21 +99,23 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <app-header condenses reveals effects="waterfall">
           <app-toolbar>
             <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
-            <div main-title>My App</div>
+            <sunsmart-login style="width:100%"></sunsmart-login>
           </app-toolbar>
+
         </app-header>
 
-        <iron-pages
+        <!-- <iron-pages
             selected="[[page]]"
             attr-for-selected="name"
             fallback-selection="view404"
             role="main">
-          <sunsmart-view1 name="view1" active="[[active]]"
+          <sunsmart-view1 name="view1"
             on-subscribe="handleSubscribe"></sunsmart-view1>
           <sunsmart-view2 name="view2"></sunsmart-view2>
           <sunsmart-view3 name="view3"></sunsmart-view3>
           <sunsmart-view404 name="view404"></sunsmart-view404>
-        </iron-pages>
+        </iron-pages> -->
+        <sunsmart-subscription></sunsmart-subscription>
       </app-header-layout>
     </app-drawer-layout>
   </template>
@@ -137,14 +135,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       observers: [
         '_routePageChanged(routeData.page)'
       ],
-      attached: function() {
-        // Load pre-caching Service Worker
-        if ('serviceWorker' in navigator) {
-          navigator.serviceWorker.register('/service-worker.js').then(function(sw) {
-            this.$.messaging.activate(sw);
-          }.bind(this));
-        }
-      },
 
       _routePageChanged: function(page) {
         this.page = page || 'view1';
